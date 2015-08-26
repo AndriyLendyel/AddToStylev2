@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.rubyapps.addictedtostyle.MainActivity" >
+
+    <item
+        android:id="@+id/share"
+        android:actionProviderClass="com.actionbarsherlock.widget.ShareActionProvider"
+        android:showAsAction="ifRoom"
+        android:title="@string/share"/>
+    <item
+        android:id="@+id/menu"
+        android:icon="@drawable/ic_menu_dots"
+        android:showAsAction="always"
+        android:title="Menu">
+        <menu>
+            <item
+                android:id="@+id/menu_settings"
+                android:showAsAction="never"
+                android:title="@string/menu_settings"/>
+            <item
+                android:id="@+id/menu_about"
+                android:showAsAction="never"
+                android:title="@string/menu_about"/>
+        </menu>
+    </item>
+</menu>
