@@ -48,11 +48,8 @@ public class MainActivity extends SherlockActivity {
 				startActivity(intent);
 			}
 		});
-		// android.provider.Settings.System.putInt(getContentResolver(),
-		// "notification_light_pulse", 1); 1 - indicate on state 0 - indicate
-		// off state
 		Appodeal.disableLocationPermissionCheck();
-		Appodeal.initialize(this, AppConfig.ADD_APP_KEY, Appodeal.BANNER);
+		Appodeal.initialize(this, AppConfig.AD_APP_KEY, Appodeal.BANNER);
 		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
 	}
 
