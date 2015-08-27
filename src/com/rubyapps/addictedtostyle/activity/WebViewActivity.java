@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -59,7 +60,25 @@ public class WebViewActivity extends SherlockActivity {
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setLoadWithOverviewMode(true);
 		webView.getSettings().setUseWideViewPort(true);
-		webView.setWebViewClient(new WebViewClient());
+		webView.setWebViewClient(new WebViewClient() {
+			@Override
+			public void onPageStarted(WebView view, String url, Bitmap favicon) {
+				if (refreshMenuItem != null) {
+					refreshMenuItem.setActionView(R.layout.action_progressbar);
+					refreshMenuItem.expandActionView();
+				}
+				super.onPageStarted(view, url, favicon);
+			}
+
+			@Override
+			public void onPageFinished(WebView view, String url) {
+				if (refreshMenuItem != null) {
+					refreshMenuItem.collapseActionView();
+					refreshMenuItem.setActionView(null);
+				}
+				super.onPageFinished(view, url);
+			}
+		});
 		webView.setWebChromeClient(new WebChromeClient());
 		webView.getSettings()
 				.setUserAgentString(
@@ -122,13 +141,9 @@ public class WebViewActivity extends SherlockActivity {
 			this.finish();
 			Intent intent = new Intent(this, MainActivity.class);
 			startActivity(intent);
-			// TODO back
 			break;
 		case R.id.progress:
-			// refresh
-			refreshMenuItem = item;
-			// load the data from server
-			new SyncData().execute();
+			webView.reload();
 			break;
 		case R.id.menu_about:
 			break;
@@ -160,30 +175,7 @@ public class WebViewActivity extends SherlockActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getSupportMenuInflater().inflate(R.menu.web_view, menu);
+		refreshMenuItem = menu.findItem(R.id.progress);
 		return super.onCreateOptionsMenu(menu);
 	}
-
-	private class SyncData extends AsyncTask<String, Void, String> {
-		@Override
-		protected void onPreExecute() {
-			refreshMenuItem.setActionView(R.layout.action_progressbar);
-			refreshMenuItem.expandActionView();
-		}
-
-		@Override
-		protected String doInBackground(String... params) {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(String result) {
-			refreshMenuItem.collapseActionView();
-			refreshMenuItem.setActionView(null);
-		}
-	};
 }
