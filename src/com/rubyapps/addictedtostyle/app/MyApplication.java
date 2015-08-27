@@ -16,7 +16,7 @@ public class MyApplication extends Application {
     
     private List<GridItem> items = new ArrayList<GridItem>(
 			Arrays.asList(
-					new GridItem(R.drawable.fashion, "Fashion", "http://www.fashionpolicenigeria.com/"),
+					new GridItem(R.drawable.fashion, "Fashion", "http://www.fashionpolicenigeria.com/"),//TODO read-more
 					new GridItem(R.drawable.beauty, "Beauty", "http://www.kamdora.com/"),
 					new GridItem(R.drawable.hair, "Hair", "http://www.voiceofhair.com/category/hairspiration/"),
 					new GridItem(R.drawable.wedding, "Weddings", "http://www.weddingdigestnaija.com/"),
