@@ -30,7 +30,7 @@ public class MyApplication extends Application {
 	public List<GridItem> getItemsList() {
 		return items;
 	}
- 
+	
     @Override
     public void onCreate() {
         super.onCreate();

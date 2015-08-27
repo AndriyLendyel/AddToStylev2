@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,7 @@ import android.widget.ArrayAdapter;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.appodeal.ads.Appodeal;
 import com.rubyapps.addictedtostyle.R;
@@ -28,6 +30,8 @@ public class WebViewActivity extends SherlockActivity {
 
 	private WebView webView;
 	private ActionBar actionBar;
+	// Refresh menu item
+	private MenuItem refreshMenuItem;
 
 	@SuppressLint("NewApi")
 	protected void onCreate(Bundle savedInstanceState) {
@@ -67,20 +71,20 @@ public class WebViewActivity extends SherlockActivity {
 				.getApplication()).getItemsList();
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-				R.layout.sherlock_spinner_dropdown_item, getItemNameList(itemsList));
-		final ActionBar actionBar = getSupportActionBar();
+				R.layout.sherlock_spinner_dropdown_item,
+				getItemNameList(itemsList));
+		actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setTitle("");
 			actionBar.setDisplayUseLogoEnabled(false);
 			actionBar.setDisplayHomeAsUpEnabled(true);
-			actionBar
-					.setNavigationMode(com.actionbarsherlock.app.ActionBar.NAVIGATION_MODE_LIST);
+			actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		}
 		ActionBar.OnNavigationListener navigationListener = new OnNavigationListener() {
 			@Override
 			public boolean onNavigationItemSelected(int itemPosition,
 					long itemId) {
-				if (itemPosition != -1){
+				if (itemPosition != -1) {
 					actionBar.setIcon(itemsList.get(itemPosition).getImageId());
 					webView.loadUrl(itemsList.get(itemPosition).getUrl());
 					webView.invalidate();
@@ -120,6 +124,12 @@ public class WebViewActivity extends SherlockActivity {
 			startActivity(intent);
 			// TODO back
 			break;
+		case R.id.progress:
+			// refresh
+			refreshMenuItem = item;
+			// load the data from server
+			new SyncData().execute();
+			break;
 		case R.id.menu_about:
 			break;
 		case R.id.menu_settings:
@@ -129,7 +139,7 @@ public class WebViewActivity extends SherlockActivity {
 		}
 		return true;
 	}
-	
+
 	public int getPositionByURL(ArrayList<GridItem> items, String url) {
 		for (GridItem item : items) {
 			if (item.getUrl().equals(url)) {
@@ -138,13 +148,42 @@ public class WebViewActivity extends SherlockActivity {
 		}
 		return -1;
 	}
-	
+
 	public ArrayList<String> getItemNameList(ArrayList<GridItem> items) {
 		ArrayList<String> result = new ArrayList<String>();
-		for (GridItem item : items){
+		for (GridItem item : items) {
 			result.add(item.getName());
 		}
 		return result;
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.web_view, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	private class SyncData extends AsyncTask<String, Void, String> {
+		@Override
+		protected void onPreExecute() {
+			refreshMenuItem.setActionView(R.layout.action_progressbar);
+			refreshMenuItem.expandActionView();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			refreshMenuItem.collapseActionView();
+			refreshMenuItem.setActionView(null);
+		}
+	};
 }
