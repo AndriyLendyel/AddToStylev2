@@ -2,17 +2,12 @@ package com.rubyapps.addictedtostyle.activity;
 
 import java.util.List;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -24,6 +19,7 @@ import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.adapter.MyGridViewAdapter;
 import com.rubyapps.addictedtostyle.app.AppConfig;
 import com.rubyapps.addictedtostyle.app.MyApplication;
+import com.rubyapps.addictedtostyle.helper.DialogAboutBuilder;
 import com.rubyapps.addictedtostyle.helper.ParseUtils;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
@@ -99,7 +95,7 @@ public class MainActivity extends SherlockActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 	switch (item.getItemId()) {
 	case R.id.menu_about:
-	    buildAndShowDialog();
+	    (new DialogAboutBuilder()).buildAndShowDialog(this);
 	    break;
 	case R.id.menu_settings:
 	    Intent intent = new Intent(this, SettingsActivity.class);
@@ -110,30 +106,4 @@ public class MainActivity extends SherlockActivity {
 	}
 	return true;
     }
-
-    private void buildAndShowDialog() {
-	AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-	// set title
-	alertDialogBuilder.setTitle(Html.fromHtml("<b>" + "Addicted to Style" + "</b>"));
-	alertDialogBuilder.setIcon(R.drawable.ic_launcher);
-	// set dialog message
-	View layout = getLayoutInflater().inflate(R.layout.dialog, null);
-	try {
-	    ((TextView) layout.findViewById(R.id.textVersion)).setText(Html.fromHtml("<b>" + "Version "
-		    + getPackageManager().getPackageInfo(getPackageName(), 0).versionName + "</b> <br>Developed by " + "<b>" + "Ruby Apps" + "</b>"));
-	    ((TextView) layout.findViewById(R.id.textCopyright)).setText(Html.fromHtml("<b>"
-		    + "Copyright \u00A9 2015 </b> <br> Build version 4.2.0/319"));
-	    alertDialogBuilder.setView(layout).setPositiveButton("OK", new DialogInterface.OnClickListener() {
-		public void onClick(DialogInterface dialog, int id) {
-		    dialog.cancel();
-		}
-	    });
-	} catch (NameNotFoundException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-	AlertDialog alertDialog = alertDialogBuilder.create();
-	alertDialog.show();
-    }
-
 }

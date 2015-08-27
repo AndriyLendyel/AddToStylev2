@@ -1,10 +1,13 @@
 package com.rubyapps.addictedtostyle.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.CheckBox;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.appodeal.ads.Appodeal;
 import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.app.AppConfig;
@@ -29,6 +32,11 @@ public class SettingsActivity extends SherlockActivity {
 	notificationSound.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_SOUND, true));
 	notificationVibro.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_VIBRO, true));
 	notificationLight.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_LIGHT, true));
+	ActionBar actionBar = getSupportActionBar();
+	if (actionBar != null) {
+	    actionBar.setDisplayUseLogoEnabled(false);
+	    actionBar.setDisplayHomeAsUpEnabled(true);
+	}
 	Appodeal.show(this, Appodeal.BANNER_BOTTOM);
     }
 
@@ -48,5 +56,18 @@ public class SettingsActivity extends SherlockActivity {
 	editor.putBoolean(AppConfig.NOTIFICATION_VIBRO, notificationVibro.isChecked());
 	editor.putBoolean(AppConfig.NOTIFICATION_LIGHT, notificationLight.isChecked());
 	editor.commit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case android.R.id.home:
+	    this.finish();
+	    Intent intent = new Intent(this, MainActivity.class);
+	    startActivity(intent);
+	    return true;
+	default:
+	    return super.onOptionsItemSelected(item);
+	}
     }
 }
