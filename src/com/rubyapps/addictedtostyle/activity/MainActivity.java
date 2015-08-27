@@ -12,6 +12,7 @@ import android.widget.GridView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.widget.ShareActionProvider;
+import com.actionbarsherlock.widget.ShareActionProvider.OnShareTargetSelectedListener;
 import com.appodeal.ads.Appodeal;
 import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.adapter.MyGridViewAdapter;
@@ -66,11 +67,20 @@ public class MainActivity extends SherlockActivity {
 		 * Getting the actionprovider associated with the menu item whose id is
 		 * share
 		 */
-		mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.share)
-				.getActionProvider();
+		mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.share).getActionProvider();
 		Intent intent = getDefaultShareIntent();
-		if (intent != null)
+		if (intent != null) {
 			mShareActionProvider.setShareIntent(intent);
+		}
+		mShareActionProvider.setOnShareTargetSelectedListener(new OnShareTargetSelectedListener() {
+
+			@Override
+			public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+				// start activity ourself to prevent search history
+				MainActivity.this.startActivity(intent);
+				return true;
+			}
+		});
 		return super.onCreateOptionsMenu(menu);
 	}
 
