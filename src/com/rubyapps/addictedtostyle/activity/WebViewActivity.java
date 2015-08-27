@@ -33,6 +33,7 @@ public class WebViewActivity extends SherlockActivity {
 	private NavigationListener navigationListener;
 	private String url;
 
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_view_activity);
@@ -67,10 +68,8 @@ public class WebViewActivity extends SherlockActivity {
 			}
 		});
 		webView.setWebChromeClient(new WebChromeClient());
-		webView.getSettings()
-				.setUserAgentString(
-						"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
-		// webView.loadUrl(getIntent().getStringExtra("url"));
+		webView.getSettings().setUserAgentString(
+				"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
 
 		itemsList = ((MyApplication) this.getApplication()).getItemsList();
 
@@ -125,16 +124,20 @@ public class WebViewActivity extends SherlockActivity {
 	@Override
 	public void onBackPressed() {
 		if (webView.canGoBack()) {
-
 			WebBackForwardList forwardList = webView.copyBackForwardList();
 			if (forwardList.getCurrentIndex() > 0) {
-				String previousUrl = forwardList.getItemAtIndex(forwardList.getCurrentIndex() - 1).getUrl();
-				System.out.println("!!!!!!!!!!!!!!   " + previousUrl);
-				int position = getPositionByURL(previousUrl);
-				System.out.println("!!!!!   position " + position);
+				url = forwardList.getItemAtIndex(forwardList.getCurrentIndex() - 1).getUrl();
+				/*
+				 * http://www.fashionpolicenigeria.com/ redirects to
+				 * http://www.fashionpolicenigeria.com/read-more/
+				 */
+				url = url.replace("/read-more", "");
+				int position = getPositionByURL(url);
 				if (position >= 0) {
 					navigationListener.doNotLoadUrl();
 					actionBar.setSelectedNavigationItem(position);
+				} else {
+					actionBar.setIcon(R.drawable.logo);
 				}
 			}
 			webView.goBack();
