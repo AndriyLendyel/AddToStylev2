@@ -1,12 +1,9 @@
 package com.rubyapps.addictedtostyle.activity;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
-import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieSyncManager;
 import android.webkit.WebChromeClient;
@@ -15,10 +12,12 @@ import android.webkit.WebSettings.RenderPriority;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.appodeal.ads.Appodeal;
 import com.rubyapps.addictedtostyle.R;
 
-public class WebViewActivity extends Activity {
+public class WebViewActivity extends SherlockActivity {
 
 	private WebView webView;
 
@@ -77,12 +76,14 @@ public class WebViewActivity extends Activity {
 			}
 			 
 			 @Override
-			public void onPageFinished(WebView view, String url) {
-				super.onPageFinished(view, url);
-				webView.postInvalidate();
-			}
+			    public void onScaleChanged(WebView view, float oldScale, float newScale) {
+			        if (view != null) {
+			            view.invalidate();
+			        }
+			    }
 		});
 		webView.setWebChromeClient(new WebChromeClient());
+		
 		webView.getSettings()
 				.setUserAgentString(
 						"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
@@ -125,5 +126,5 @@ public class WebViewActivity extends Activity {
 			super.onBackPressed();
 		}
 	}
-
+	
 }

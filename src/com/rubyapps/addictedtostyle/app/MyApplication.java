@@ -7,6 +7,7 @@ import java.util.List;
 import android.app.Application;
 
 import com.rubyapps.addictedtostyle.R;
+import com.rubyapps.addictedtostyle.helper.ParseUtils;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
 public class MyApplication extends Application {
@@ -35,7 +36,7 @@ public class MyApplication extends Application {
         super.onCreate();
         mInstance = this;
         // register with parse
-    //    ParseUtils.registerParse(this);
+        ParseUtils.registerParse(this);
     }
  
     public static synchronized MyApplication getInstance() {

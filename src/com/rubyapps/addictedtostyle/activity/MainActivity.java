@@ -17,6 +17,7 @@ import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.adapter.MyGridViewAdapter;
 import com.rubyapps.addictedtostyle.app.AppConfig;
 import com.rubyapps.addictedtostyle.app.MyApplication;
+import com.rubyapps.addictedtostyle.helper.ParseUtils;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
 public class MainActivity extends SherlockActivity {
@@ -28,7 +29,7 @@ public class MainActivity extends SherlockActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//ParseUtils.verifyParseConfiguration(this);
+		ParseUtils.verifyParseConfiguration(this);
 
 		gridView = (GridView) findViewById(R.id.gridView);
 		final List<GridItem> itemsList = ((MyApplication) this.getApplication())
@@ -59,15 +60,6 @@ public class MainActivity extends SherlockActivity {
 	public void onResume() {
 		super.onResume();
 		Appodeal.onResume(this, Appodeal.BANNER);
-
-		Intent intent = getIntent();
-		String url = intent.getStringExtra("url");
-		if (url != null && !url.isEmpty()) {
-			Intent intentWeb = new Intent(MainActivity.this,
-					WebViewActivity.class);
-			intentWeb.putExtra("url", url);
-			startActivity(intentWeb);
-		}
 	}
 
 	@Override
@@ -79,16 +71,12 @@ public class MainActivity extends SherlockActivity {
 		 */
 		mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.share)
 				.getActionProvider();
-		/** Getting the target intent */
 		Intent intent = getDefaultShareIntent();
-		/** Setting a share intent */
 		if (intent != null)
 			mShareActionProvider.setShareIntent(intent);
 		return super.onCreateOptionsMenu(menu);
-
 	}
 
-	/** Returns a share intent */
 	private Intent getDefaultShareIntent() {
 		Intent intent = new Intent(Intent.ACTION_SEND);
 		String shareBody = "Please provide this text. https://play.google.com/store/apps/details?id=";
