@@ -94,18 +94,19 @@ public class WebViewActivity extends SherlockActivity {
 
 		@Override
 		public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-			if (getPositionByURL(url) == -1) {
+			if (url != null && getPositionByURL(url) == -1) {
 				actionBar.setIcon(R.drawable.logo);
+				webView.loadUrl(url);
+				url = null;
+				return false;
 			} else {
-				url = itemsList.get(itemPosition).getUrl();
 				actionBar.setIcon(itemsList.get(itemPosition).getImageId());
 			}
 			if (loadUrl) {
-				webView.loadUrl(url);
+				webView.loadUrl(itemsList.get(itemPosition).getUrl());
 			} else {
 				loadUrl = true;
 			}
-
 			return false;
 		}
 
@@ -126,7 +127,7 @@ public class WebViewActivity extends SherlockActivity {
 		if (webView.canGoBack()) {
 			WebBackForwardList forwardList = webView.copyBackForwardList();
 			if (forwardList.getCurrentIndex() > 0) {
-				url = forwardList.getItemAtIndex(forwardList.getCurrentIndex() - 1).getUrl();
+				String url = forwardList.getItemAtIndex(forwardList.getCurrentIndex() - 1).getUrl();
 				/*
 				 * http://www.fashionpolicenigeria.com/ redirects to
 				 * http://www.fashionpolicenigeria.com/read-more/
