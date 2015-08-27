@@ -3,21 +3,26 @@ package com.rubyapps.addictedtostyle.receiver;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.parse.ParsePushBroadcastReceiver;
-import com.rubyapps.addictedtostyle.activity.WebViewActivity;
-
 import android.app.Activity;
 import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
+
+import com.parse.ParsePushBroadcastReceiver;
+import com.rubyapps.addictedtostyle.activity.WebViewActivity;
+import com.rubyapps.addictedtostyle.app.AppConfig;
 
 public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 	private final String TAG = CustomPushReceiver.class.getSimpleName();
 
 	@Override
 	protected void onPushReceive(Context context, Intent intent) {
-		super.onPushReceive(context, intent);
+		SharedPreferences settings = context.getSharedPreferences(AppConfig.SETTINGS, 0);
+		if (settings.getBoolean(AppConfig.NOTIFICATION, true)){
+			super.onPushReceive(context, intent);
+		} 
 	}
 
 	@Override
@@ -47,9 +52,17 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 	@Override
 	protected Notification getNotification(Context context, Intent intent) {
 		Notification notification = super.getNotification(context, intent);
-		//TODO add settings 
-		//notification.defaults = 0;
-		notification.sound = null;
+		SharedPreferences settings = context.getSharedPreferences(AppConfig.SETTINGS, 0);
+		notification.defaults = 0;
+		if (settings.getBoolean(AppConfig.NOTIFICATION_SOUND, true)){
+			notification.defaults |= Notification.DEFAULT_SOUND;
+		}
+		if (settings.getBoolean(AppConfig.NOTIFICATION_VIBRO, true)){
+			notification.defaults |= Notification.DEFAULT_VIBRATE;
+		}
+		if (settings.getBoolean(AppConfig.NOTIFICATION_LIGHT, true)){
+			notification.defaults |= Notification.DEFAULT_LIGHTS;
+		}
 		return notification;
 	}
 
