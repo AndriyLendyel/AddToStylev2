@@ -102,6 +102,8 @@ public class MainActivity extends SherlockActivity {
 	    buildAndShowDialog();
 	    break;
 	case R.id.menu_settings:
+	    Intent intent = new Intent(this, SettingsActivity.class);
+	    startActivity(intent);
 	    break;
 	default:
 	    break;
@@ -119,7 +121,8 @@ public class MainActivity extends SherlockActivity {
 	try {
 	    ((TextView) layout.findViewById(R.id.textVersion)).setText(Html.fromHtml("<b>" + "Version "
 		    + getPackageManager().getPackageInfo(getPackageName(), 0).versionName + "</b> <br>Developed by " + "<b>" + "Ruby Apps" + "</b>"));
-	    ((TextView) layout.findViewById(R.id.textCopyright)).setText("Copyright \u00A9 2015");
+	    ((TextView) layout.findViewById(R.id.textCopyright)).setText(Html.fromHtml("<b>"
+		    + "Copyright \u00A9 2015 </b> <br> Build version 4.2.0/319"));
 	    alertDialogBuilder.setView(layout).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int id) {
 		    dialog.cancel();

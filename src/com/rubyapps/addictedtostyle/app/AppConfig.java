@@ -8,4 +8,9 @@ public class AppConfig {
     public static final String PARSE_CLIENT_KEY = "DuONKhU5ZKIaIwEDjITPeeUAB3slPT3z9IAMcq1T";//Parse our
  //   public static final String AD_APP_KEY = "d40b1be98ba790e886699beb111f435caebe237a364d885d";//Add her
     public static final String PARSE_CHANNEL = "MyChanel";
+    public static final String SETTINGS = "NotificcationSettings";
+    public static final String NOTIFICATION_LIGHT = "notificationLight";
+    public static final String NOTIFICATION_VIBRO = "notificationVibro";
+    public static final String NOTIFICATION_SOUND = "notificationSound";
+    public static final String NOTIFICATION = "notification";
 }

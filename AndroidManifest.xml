@@ -52,6 +52,11 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name=".activity.SettingsActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="@string/app_name" >
+        </activity>
 
         <!-- Added for Parse push notifications -->
 

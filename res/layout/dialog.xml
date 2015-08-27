@@ -8,7 +8,7 @@
         android:id="@+id/textVersion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="one" />
+        android:padding="15dp" />
 
     <ImageView
         android:layout_width="fill_parent"
@@ -19,6 +19,7 @@
         android:id="@+id/textCopyright"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="two" />
+        android:gravity="center"
+        android:padding="15dp" />
 
 </LinearLayout>
