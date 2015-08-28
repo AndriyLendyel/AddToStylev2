@@ -41,4 +41,18 @@ public class MyApplication extends Application {
 	public static synchronized MyApplication getInstance() {
 		return mInstance;
 	}
+	
+	public int getPositionByURL(String url) {
+		int res = -1;
+		if (url == null || url.isEmpty()) {
+			return res;
+		}
+		for (int i = 0; i < items.size(); i++) {
+			GridItem item = items.get(i);
+			if (url.contains(item.getUrl())) {
+				res = i;
+			}
+		}
+		return res;
+	}
 }

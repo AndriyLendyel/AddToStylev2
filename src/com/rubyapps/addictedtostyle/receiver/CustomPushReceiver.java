@@ -13,6 +13,7 @@ import android.util.Log;
 import com.parse.ParsePushBroadcastReceiver;
 import com.rubyapps.addictedtostyle.activity.WebViewActivity;
 import com.rubyapps.addictedtostyle.app.AppConfig;
+import com.rubyapps.addictedtostyle.app.MyApplication;
 
 public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 	private final String TAG = CustomPushReceiver.class.getSimpleName();
@@ -40,7 +41,8 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 	@Override
 	protected Class<? extends Activity> getActivity(Context context, Intent intent) {
 		Class<? extends Activity> activity;
-		if (intent.getStringExtra("url") != null) {
+		MyApplication application = MyApplication.class.cast(context.getApplicationContext());
+		if (intent.getStringExtra("url") != null && application.getPositionByURL(intent.getStringExtra("url")) >= 0) {
 			activity = WebViewActivity.class;
 		} else {
 			activity = super.getActivity(context, intent);

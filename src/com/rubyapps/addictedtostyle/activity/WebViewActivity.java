@@ -32,6 +32,7 @@ public class WebViewActivity extends SherlockActivity {
 	private List<GridItem> itemsList;
 	private NavigationListener navigationListener;
 	private String url;
+	MyApplication myApplication ;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +72,8 @@ public class WebViewActivity extends SherlockActivity {
 		webView.getSettings().setUserAgentString(
 				"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
 
-		itemsList = ((MyApplication) this.getApplication()).getItemsList();
+		myApplication = (MyApplication) this.getApplication();
+		itemsList = myApplication.getItemsList();
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.sherlock_spinner_dropdown_item,
 				getItemNameList(itemsList));
@@ -84,7 +86,7 @@ public class WebViewActivity extends SherlockActivity {
 			navigationListener = new NavigationListener();
 			actionBar.setListNavigationCallbacks(adapter, navigationListener);
 			adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-			actionBar.setSelectedNavigationItem(getPositionByURL(url));
+			actionBar.setSelectedNavigationItem(myApplication.getPositionByURL(url));
 		}
 	}
 
@@ -94,7 +96,7 @@ public class WebViewActivity extends SherlockActivity {
 
 		@Override
 		public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-			if (url != null && getPositionByURL(url) == -1) {
+			if (url != null && myApplication.getPositionByURL(url) == -1) {
 				actionBar.setIcon(R.drawable.logo);
 				webView.loadUrl(url);
 				url = null;
@@ -133,7 +135,7 @@ public class WebViewActivity extends SherlockActivity {
 				 * http://www.fashionpolicenigeria.com/read-more/
 				 */
 				url = url.replace("/read-more", "");
-				int position = getPositionByURL(url);
+				int position = myApplication.getPositionByURL(url);
 				if (position >= 0) {
 					navigationListener.doNotLoadUrl();
 					actionBar.setSelectedNavigationItem(position);
@@ -169,15 +171,6 @@ public class WebViewActivity extends SherlockActivity {
 			break;
 		}
 		return true;
-	}
-
-	private int getPositionByURL(String url) {
-		for (GridItem item : itemsList) {
-			if (item.getUrl().equals(url)) {
-				return itemsList.indexOf(item);
-			}
-		}
-		return -1;
 	}
 
 	private ArrayList<String> getItemNameList(List<GridItem> items) {
