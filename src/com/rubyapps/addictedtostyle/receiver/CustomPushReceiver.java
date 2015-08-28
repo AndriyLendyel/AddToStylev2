@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.parse.ParsePushBroadcastReceiver;
 import com.rubyapps.addictedtostyle.activity.WebViewActivity;
@@ -21,9 +22,9 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 	@Override
 	protected void onPushReceive(Context context, Intent intent) {
 		SharedPreferences settings = context.getSharedPreferences(AppConfig.SETTINGS, 0);
-		if (settings.getBoolean(AppConfig.NOTIFICATION, true)){
+		if (settings.getBoolean(AppConfig.NOTIFICATION, true)) {
 			super.onPushReceive(context, intent);
-		} 
+		}
 	}
 
 	@Override
@@ -34,8 +35,9 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 			intent.putExtra("url", url);
 		} catch (JSONException e) {
 			Log.e(TAG, "Push message json exception: " + e.getMessage());
+		} finally {
+			super.onPushOpen(context, intent);
 		}
-		super.onPushOpen(context, intent);
 	}
 
 	@Override
@@ -56,13 +58,13 @@ public class CustomPushReceiver extends ParsePushBroadcastReceiver {
 		Notification notification = super.getNotification(context, intent);
 		SharedPreferences settings = context.getSharedPreferences(AppConfig.SETTINGS, 0);
 		notification.defaults = 0;
-		if (settings.getBoolean(AppConfig.NOTIFICATION_SOUND, true)){
+		if (settings.getBoolean(AppConfig.NOTIFICATION_SOUND, true)) {
 			notification.defaults |= Notification.DEFAULT_SOUND;
 		}
-		if (settings.getBoolean(AppConfig.NOTIFICATION_VIBRO, true)){
+		if (settings.getBoolean(AppConfig.NOTIFICATION_VIBRO, true)) {
 			notification.defaults |= Notification.DEFAULT_VIBRATE;
 		}
-		if (settings.getBoolean(AppConfig.NOTIFICATION_LIGHT, true)){
+		if (settings.getBoolean(AppConfig.NOTIFICATION_LIGHT, true)) {
 			notification.defaults |= Notification.DEFAULT_LIGHTS;
 		}
 		return notification;
