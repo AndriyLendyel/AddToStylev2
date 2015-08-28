@@ -25,85 +25,85 @@ import com.rubyapps.addictedtostyle.model.GridItem;
 
 public class MainActivity extends SherlockActivity {
 
-    private ShareActionProvider mShareActionProvider;
-    private GridView gridView;
+	private ShareActionProvider mShareActionProvider;
+	private GridView gridView;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-	super.onCreate(savedInstanceState);
-	setContentView(R.layout.activity_main);
-	ParseUtils.verifyParseConfiguration(this);
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		ParseUtils.verifyParseConfiguration(this);
 
-	gridView = (GridView) findViewById(R.id.gridView);
-	final List<GridItem> itemsList = ((MyApplication) this.getApplication()).getItemsList();
-	MyGridViewAdapter adapter = new MyGridViewAdapter(this, R.layout.grid_item, itemsList);
-	gridView.setAdapter(adapter);
-	gridView.setOnItemClickListener(new OnItemClickListener() {
+		gridView = (GridView) findViewById(R.id.gridView);
+		final List<GridItem> itemsList = ((MyApplication) this.getApplication()).getItemsList();
+		MyGridViewAdapter adapter = new MyGridViewAdapter(this, R.layout.grid_item, itemsList);
+		gridView.setAdapter(adapter);
+		gridView.setOnItemClickListener(new OnItemClickListener() {
 
-	    @Override
-	    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-		Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
-		intent.putExtra("url", itemsList.get(arg2).getUrl());
-		startActivity(intent);
-	    }
-	});
-	Appodeal.disableLocationPermissionCheck();
-	Appodeal.initialize(this, AppConfig.AD_APP_KEY, Appodeal.BANNER);
-	Appodeal.show(this, Appodeal.BANNER_BOTTOM);
-    }
-
-    @Override
-    public void onResume() {
-	super.onResume();
-	Appodeal.onResume(this, Appodeal.BANNER);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-	getSupportMenuInflater().inflate(R.menu.main, menu);
-	/**
-	 * Getting the actionprovider associated with the menu item whose id is
-	 * share
-	 */
-	mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.share).getActionProvider();
-	Intent intent = getDefaultShareIntent();
-	if (intent != null) {
-	    mShareActionProvider.setShareIntent(intent);
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+				Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+				intent.putExtra("url", itemsList.get(arg2).getUrl());
+				startActivity(intent);
+			}
+		});
+		Appodeal.disableLocationPermissionCheck();
+		Appodeal.initialize(this, AppConfig.AD_APP_KEY, Appodeal.BANNER);
+		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
 	}
-	mShareActionProvider.setOnShareTargetSelectedListener(new OnShareTargetSelectedListener() {
 
-	    @Override
-	    public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
-		// start activity ourself to prevent search history
-		MainActivity.this.startActivity(intent);
+	@Override
+	public void onResume() {
+		super.onResume();
+		Appodeal.onResume(this, Appodeal.BANNER);
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.main, menu);
+		/**
+		 * Getting the actionprovider associated with the menu item whose id is
+		 * share
+		 */
+		mShareActionProvider = (ShareActionProvider) menu.findItem(R.id.share).getActionProvider();
+		Intent intent = getDefaultShareIntent();
+		if (intent != null) {
+			mShareActionProvider.setShareIntent(intent);
+		}
+		mShareActionProvider.setOnShareTargetSelectedListener(new OnShareTargetSelectedListener() {
+
+			@Override
+			public boolean onShareTargetSelected(ShareActionProvider source, Intent intent) {
+				// start activity ourself to prevent search history
+				MainActivity.this.startActivity(intent);
+				return true;
+			}
+		});
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	private Intent getDefaultShareIntent() {
+		Intent intent = new Intent(Intent.ACTION_SEND);
+		String shareBody = "Addicted to style. https://play.google.com/store/apps/details?id=";
+		intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Addicted to style");
+		intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody + getPackageName());
+		intent.setType("text/plain");
+		return intent;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.menu_about:
+			(new DialogAboutBuilder()).buildAndShowDialog(this);
+			break;
+		case R.id.menu_settings:
+			Intent intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			break;
+		default:
+			break;
+		}
 		return true;
-	    }
-	});
-	return super.onCreateOptionsMenu(menu);
-    }
-
-    private Intent getDefaultShareIntent() {
-	Intent intent = new Intent(Intent.ACTION_SEND);
-	String shareBody = "Please provide this text. https://play.google.com/store/apps/details?id=";
-	intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Subject to provide");
-	intent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody + getPackageName());
-	intent.setType("text/plain");
-	return intent;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-	switch (item.getItemId()) {
-	case R.id.menu_about:
-	    (new DialogAboutBuilder()).buildAndShowDialog(this);
-	    break;
-	case R.id.menu_settings:
-	    Intent intent = new Intent(this, SettingsActivity.class);
-	    startActivity(intent);
-	    break;
-	default:
-	    break;
 	}
-	return true;
-    }
 }

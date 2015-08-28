@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -32,12 +35,32 @@ public class SettingsActivity extends SherlockActivity {
 		notificationSound.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_SOUND, true));
 		notificationVibro.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_VIBRO, true));
 		notificationLight.setChecked(settings.getBoolean(AppConfig.NOTIFICATION_LIGHT, true));
+		notification.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				enableCheckboxes(isChecked);
+			}
+		});
 		ActionBar actionBar = getSupportActionBar();
 		if (actionBar != null) {
 			actionBar.setDisplayUseLogoEnabled(false);
 			actionBar.setDisplayHomeAsUpEnabled(true);
 		}
 		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
+		enableCheckboxes(notification.isChecked());
+	}
+
+	private void enableCheckboxes(boolean isChecked) {
+		if (isChecked) {
+			notificationLight.setEnabled(true);
+			notificationSound.setEnabled(true);
+			notificationVibro.setEnabled(true);
+		} else {
+			notificationLight.setEnabled(false);
+			notificationSound.setEnabled(false);
+			notificationVibro.setEnabled(false);
+		}
 	}
 
 	@Override
