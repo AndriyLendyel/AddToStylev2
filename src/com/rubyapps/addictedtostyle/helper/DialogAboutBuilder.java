@@ -21,7 +21,7 @@ public class DialogAboutBuilder {
 	    ((TextView) layout.findViewById(R.id.textVersion)).setText(Html.fromHtml("<b>" + "Version "
 		    + context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName + "</b> <br>Developed by " + "<b>" + "Ruby Apps" + "</b>"));
 	    ((TextView) layout.findViewById(R.id.textCopyright)).setText(Html.fromHtml("<b>"
-		    + "Copyright \u00A9 2015 </b> <br> Build version 4.2.0/319"));
+		    + "Copyright \u00A9 2015 </b> <br> Build version 4.4.0/23"));
 	    alertDialogBuilder.setView(layout).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 		public void onClick(DialogInterface dialog, int id) {
 		    dialog.cancel();

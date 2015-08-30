@@ -3,6 +3,17 @@ package com.rubyapps.addictedtostyle.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.webkit.WebBackForwardList;
+import android.webkit.WebChromeClient;
+import android.webkit.WebSettings;
+import android.webkit.WebSettings.LayoutAlgorithm;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -13,15 +24,6 @@ import com.rubyapps.addictedtostyle.app.MyApplication;
 import com.rubyapps.addictedtostyle.helper.DialogAboutBuilder;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.os.Bundle;
-import android.webkit.WebBackForwardList;
-import android.webkit.WebChromeClient;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.ArrayAdapter;
-
 public class WebViewActivity extends SherlockActivity {
 
 	private WebView webView;
@@ -29,10 +31,10 @@ public class WebViewActivity extends SherlockActivity {
 	// Refresh menu item
 	private MenuItem refreshMenuItem;
 
-	private List<GridItem> itemsList;
+	private List<GridItem> itemsList = new ArrayList<GridItem>();
 	private NavigationListener navigationListener;
 	private String url;
-	MyApplication myApplication ;
+	MyApplication myApplication;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class WebViewActivity extends SherlockActivity {
 		setContentView(R.layout.web_view_activity);
 		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
 		url = getIntent().getStringExtra("url");
+		getIntent().removeExtra("url");
 		webView = (WebView) findViewById(R.id.webView);
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
@@ -48,6 +51,7 @@ public class WebViewActivity extends SherlockActivity {
 		webView.getSettings().setBuiltInZoomControls(true);
 		webView.getSettings().setSupportZoom(true);
 		webView.getSettings().setLoadWithOverviewMode(true);
+		webView.getSettings().setLayoutAlgorithm(LayoutAlgorithm.NORMAL);
 		webView.getSettings().setUseWideViewPort(true);
 		webView.setWebViewClient(new WebViewClient() {
 			@Override
@@ -69,11 +73,13 @@ public class WebViewActivity extends SherlockActivity {
 			}
 		});
 		webView.setWebChromeClient(new WebChromeClient());
-		webView.getSettings().setUserAgentString(
-				"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
+		webView.getSettings()
+				.setUserAgentString(
+						"Mozilla/5.0 (Linux; Android 4.4; Nexus 4 Build/KRT16H) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/30.0.0.0 Mobile Safari/537.36");
 
 		myApplication = (MyApplication) this.getApplication();
-		itemsList = myApplication.getItemsList();
+		itemsList.add(new GridItem(R.drawable.logo, "Addicted to Style", ""));
+		itemsList.addAll(myApplication.getItemsList());
 
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.sherlock_spinner_dropdown_item,
 				getItemNameList(itemsList));
@@ -86,7 +92,8 @@ public class WebViewActivity extends SherlockActivity {
 			navigationListener = new NavigationListener();
 			actionBar.setListNavigationCallbacks(adapter, navigationListener);
 			adapter.setDropDownViewResource(R.layout.sherlock_spinner_dropdown_item);
-			actionBar.setSelectedNavigationItem(myApplication.getPositionByURL(url));
+			int positionByURL = getPositionByURL(url);
+			actionBar.setSelectedNavigationItem(positionByURL);
 		}
 	}
 
@@ -96,20 +103,42 @@ public class WebViewActivity extends SherlockActivity {
 
 		@Override
 		public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-			if (url != null && myApplication.getPositionByURL(url) == -1) {
-				actionBar.setIcon(R.drawable.logo);
-				webView.loadUrl(url);
-				url = null;
-				return false;
+			actionBar.setIcon(itemsList.get(itemPosition).getImageId());
+
+			if (!loadUrl) {
+				loadUrl = true;
+				return true;
+			}
+
+			webView.getSettings().setTextSize(WebSettings.TextSize.NORMAL);
+			if (itemPosition == 0) {
+				if (url != null && !url.isEmpty()) {
+					webView.loadUrl(url);
+					getIntent().removeExtra("message");
+					url = null;
+				} else {
+
+					String message = getIntent().getStringExtra("message");
+					if (message != null && !message.isEmpty()) {
+						webView.getSettings().setTextSize(WebSettings.TextSize.LARGER);
+						webView.loadData("<h1>" + message + "</h1>", "text/html", "utf-8");
+					} else {
+						finish();
+						Intent intent = new Intent(WebViewActivity.this, MainActivity.class);
+						startActivity(intent);
+					}
+				}
 			} else {
 				actionBar.setIcon(itemsList.get(itemPosition).getImageId());
+				if (url != null && !url.isEmpty()) {
+					webView.loadUrl(url);
+					getIntent().removeExtra("message");
+					url = null;
+				} else {
+					webView.loadUrl(itemsList.get(itemPosition).getUrl());
+				}
 			}
-			if (loadUrl) {
-				webView.loadUrl(itemsList.get(itemPosition).getUrl());
-			} else {
-				loadUrl = true;
-			}
-			return false;
+			return true;
 		}
 
 		void doNotLoadUrl() {
@@ -130,17 +159,10 @@ public class WebViewActivity extends SherlockActivity {
 			WebBackForwardList forwardList = webView.copyBackForwardList();
 			if (forwardList.getCurrentIndex() > 0) {
 				String url = forwardList.getItemAtIndex(forwardList.getCurrentIndex() - 1).getUrl();
-				/*
-				 * http://www.fashionpolicenigeria.com/ redirects to
-				 * http://www.fashionpolicenigeria.com/read-more/
-				 */
-				url = url.replace("/read-more", "");
-				int position = myApplication.getPositionByURL(url);
-				if (position >= 0) {
+				int positionByURL = getPositionByURL(url);
+				if (actionBar.getSelectedNavigationIndex() != positionByURL) {
 					navigationListener.doNotLoadUrl();
-					actionBar.setSelectedNavigationItem(position);
-				} else {
-					actionBar.setIcon(R.drawable.logo);
+					actionBar.setSelectedNavigationItem(positionByURL);
 				}
 			}
 			webView.goBack();
@@ -163,10 +185,6 @@ public class WebViewActivity extends SherlockActivity {
 		case R.id.menu_about:
 			(new DialogAboutBuilder()).buildAndShowDialog(this);
 			break;
-		case R.id.menu_settings:
-			Intent intentSettings = new Intent(this, SettingsActivity.class);
-			startActivity(intentSettings);
-			break;
 		default:
 			break;
 		}
@@ -179,6 +197,20 @@ public class WebViewActivity extends SherlockActivity {
 			result.add(item.getName());
 		}
 		return result;
+	}
+
+	public int getPositionByURL(String url) {
+		int res = 0;
+		if (url == null || url.isEmpty()) {
+			return res;
+		}
+		for (int i = 0; i < itemsList.size(); i++) {
+			GridItem item = itemsList.get(i);
+			if (url.contains(item.getUrl())) {
+				res = i;
+			}
+		}
+		return res;
 	}
 
 	@Override
