@@ -54,12 +54,7 @@ public class DialogBuilder {
 				editor.putBoolean(AppConfig.SURE_PRESSED, true);
 				editor.commit();
 				final String appPackageName = context.getPackageName();
-				try {
-					context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-				} catch (android.content.ActivityNotFoundException anfe) {
-					context.startActivity(new Intent(Intent.ACTION_VIEW, Uri
-							.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-				}
+				showPlayMarket(context);
 			}
 		});
 		alertDialogBuilder.setNeutralButton("No", new DialogInterface.OnClickListener() {
@@ -78,6 +73,40 @@ public class DialogBuilder {
 		alertDialogBuilder.setCancelable(false);
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		alertDialog.show();
+	}
+
+	public void buildAndShowUpdateDialog(final MainActivity context) {
+		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+		alertDialogBuilder.setTitle(Html.fromHtml("<b>" + "Update Addicted to Style" + "</b>"));
+		alertDialogBuilder
+				.setMessage(
+						"You're using an old version of Addicted to Style. Update to the latest version of Addicted to style for new features and fixes.")
+				.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int id) {
+						showPlayMarket(context);
+					}
+				});
+		alertDialogBuilder.setNegativeButton("Ignore", new DialogInterface.OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		alertDialogBuilder.setCancelable(false);
+		AlertDialog alertDialog = alertDialogBuilder.create();
+		alertDialog.show();
+	}
+	
+	private void showPlayMarket(Activity context){
+		final String appPackageName = context.getPackageName();
+		try {
+			context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id="
+					+ appPackageName)));
+		} catch (android.content.ActivityNotFoundException anfe) {
+			context.startActivity(new Intent(Intent.ACTION_VIEW, Uri
+					.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+		}
 	}
 
 }

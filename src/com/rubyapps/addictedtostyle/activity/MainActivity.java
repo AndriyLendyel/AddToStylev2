@@ -2,9 +2,12 @@ package com.rubyapps.addictedtostyle.activity;
 
 import java.util.List;
 
+import org.jsoup.Jsoup;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -59,6 +62,8 @@ public class MainActivity extends SherlockActivity {
 		Appodeal.setInterstitialCallbacks(interstitialListener);
 		Appodeal.show(this, Appodeal.BANNER_VIEW);
 		handler.post(sendData);
+		checkForUpdates();
+
 	}
 
 	@Override
@@ -190,4 +195,35 @@ public class MainActivity extends SherlockActivity {
 			(new DialogBuilder()).buildAndShowRateUsDialog(MainActivity.this);
 		}
 	};
+
+	private void checkForUpdates() {
+		new CheckUpdates().execute();
+	}
+	
+	private class CheckUpdates extends AsyncTask<Void, Void, Boolean> {
+	    @Override
+	    protected Boolean doInBackground(Void... params) {
+	    	try {
+				String curVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+				String newVersion = curVersion;
+				newVersion = Jsoup
+						.connect("https://play.google.com/store/apps/details?id=" + getPackageName() + "&hl=en")
+						.timeout(30000)
+						.userAgent(
+								"Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+						.referrer("http://www.google.com").get().select("div[itemprop=softwareVersion]").first().ownText();
+				return (Double.valueOf(curVersion) < Double.valueOf(newVersion)) ? true : false;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+	    }
+	    
+	    @Override
+	    protected void onPostExecute(Boolean isNewVersionAvailable) {
+	    	if (isNewVersionAvailable){
+	    		new DialogBuilder().buildAndShowUpdateDialog(MainActivity.this);
+	    	}
+	    }
+	}
 }
