@@ -3,8 +3,11 @@ package com.rubyapps.addictedtostyle.activity;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -21,7 +24,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.appodeal.ads.Appodeal;
 import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.app.MyApplication;
-import com.rubyapps.addictedtostyle.helper.DialogAboutBuilder;
+import com.rubyapps.addictedtostyle.helper.DialogBuilder;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
 public class WebViewActivity extends SherlockActivity {
@@ -40,7 +43,7 @@ public class WebViewActivity extends SherlockActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.web_view_activity);
-		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
+		Appodeal.show(this, Appodeal.BANNER_VIEW);
 		url = getIntent().getStringExtra("url");
 		getIntent().removeExtra("url");
 		webView = (WebView) findViewById(R.id.webView);
@@ -70,6 +73,24 @@ public class WebViewActivity extends SherlockActivity {
 					refreshMenuItem.setActionView(null);
 				}
 				super.onPageFinished(view, url);
+			}
+
+			@Override
+			public boolean shouldOverrideUrlLoading(WebView view, String url) {
+				if (Uri.parse(url).getScheme().equals("market")) {
+					try {
+						Intent intent = new Intent(Intent.ACTION_VIEW);
+						intent.setData(Uri.parse(url));
+						Activity host = (Activity) view.getContext();
+						host.startActivity(intent);
+						return true;
+					} catch (ActivityNotFoundException e) {
+						Uri uri = Uri.parse(url);
+						view.loadUrl("http://play.google.com/store/apps/" + uri.getHost() + "?" + uri.getQuery());
+						return false;
+					}
+				}
+				return false;
 			}
 		});
 		webView.setWebChromeClient(new WebChromeClient());
@@ -129,6 +150,9 @@ public class WebViewActivity extends SherlockActivity {
 					}
 				}
 			} else {
+				if (itemPosition == itemsList.size() - 1) {
+					webView.getSettings().setTextSize(WebSettings.TextSize.LARGER);
+				}
 				actionBar.setIcon(itemsList.get(itemPosition).getImageId());
 				if (url != null && !url.isEmpty()) {
 					webView.loadUrl(url);
@@ -150,7 +174,7 @@ public class WebViewActivity extends SherlockActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		Appodeal.onResume(this, Appodeal.BANNER);
+		Appodeal.onResume(this, Appodeal.BANNER_VIEW);
 	}
 
 	@Override
@@ -183,7 +207,7 @@ public class WebViewActivity extends SherlockActivity {
 			webView.reload();
 			break;
 		case R.id.menu_about:
-			(new DialogAboutBuilder()).buildAndShowDialog(this);
+			(new DialogBuilder()).buildAndShowAboutDialog(this);
 			break;
 		default:
 			break;

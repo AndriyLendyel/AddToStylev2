@@ -14,17 +14,27 @@ public class MyApplication extends Application {
 
 	private static MyApplication mInstance;
 
-	private List<GridItem> items = new ArrayList<GridItem>(Arrays.asList(new GridItem(R.drawable.fashion, "Fashion",
-			"http://www.fashionpolicenigeria.com/"), new GridItem(R.drawable.beauty, "Beauty",
-			"http://www.kamdora.com/"), new GridItem(R.drawable.hair, "Hair",
-			"http://www.voiceofhair.com/category/hairspiration/"), new GridItem(R.drawable.wedding, "Weddings",
-			"http://www.weddingdigestnaija.com/"), new GridItem(R.drawable.celebrity_style, "Celebrity Style",
-			"http://blog.glamafrica.com/category/celebs/"), new GridItem(R.drawable.lifestyle_relationships,
-			"Lifestyle: Relationship", "http://www.cosmopolitan.ng/relationships/"), new GridItem(
-			R.drawable.diy_fashion_tips, "DIY Fashion Tips", "http://addictedtostyle.net/"), new GridItem(
-			R.drawable.juicy_gist, "Juicy Gist", "http://yabaleftonline.com/"), new GridItem(R.drawable.giveaway,
-			"Giveaway", "http://addictedtostyle.net/category/giveaway/"), new GridItem(R.drawable.rate_us,
-			"Rate & Update", " https://play.google.com/store/apps/details?id=com.rubyapps.addictedtostyle")));
+	private List<GridItem> items = new ArrayList<GridItem>(Arrays.asList(
+			new GridItem(R.drawable.latest_fashion, "Latest Fashion","http://addictedtostyle.net/category/fashion/"),
+			new GridItem(R.drawable.fashion_police, "Fashion Police","http://www.madivas.com/"),
+			new GridItem(R.drawable.fashion_academy, "Fashion Academy","http://addictedtostyle.net/category/fashion-academy/"),
+			new GridItem(R.drawable.makeup_training, "MakeUp Training","http://www.stellasaddiction.com/"),
+			new GridItem(R.drawable.urban_chic, "Urban Style","http://www.kamdora.com/"),
+			new GridItem(R.drawable.boss_lady, "Boss lady", "http://addictedtostyle.net/tag/boss-lady-camp/"),
+			new GridItem(R.drawable.ankara_styles, "Ankara Styles", "http://ankarafestla.tumblr.com/"),
+			new GridItem(R.drawable.hair, "Glam Hairstyles", "http://naturalhairvideos.tumblr.com/"),
+			new GridItem(R.drawable.nails, "Nail Art", "http://www.thatigbochick.com/search/label/NAIL%20IT"),
+			new GridItem(R.drawable.wedding, "Weddings","http://weddaily.com/"),
+			new GridItem(R.drawable.celebrity_style, "Celebrity Styles","http://blog.glamafrica.com/category/celebs/"),
+			new GridItem(R.drawable.cosmopolitian, "Cosmopolitan","http://www.cosmopolitan.ng/"),
+			new GridItem(R.drawable.skincare, "Skincare","http://www.cloudywithachanceofwine.com/category/skin-care/"),
+			new GridItem(R.drawable.men_styles, "Men Styles", "http://www.360nobs.com/category/fashion/fashion-men/"),
+			new GridItem(R.drawable.big_and_beautiful, "Big and Beautiful", "http://www.trendycurvy.com"),
+			new GridItem(R.drawable.fashion_junkie, "Fashion Junkie","http://www.fashionjunkie9ja.com/"),
+			new GridItem(R.drawable.giveaway, "Giveaway","http://addictedtostyle.net/tag/giveaway/"),
+			new GridItem(R.drawable.gele_styles, "Gele Styles","http://www.dezangozone.com/search/label/Gele"),
+			new GridItem(R.drawable.your_wish_our_command, "Your Wish, Our Command","http://addictedtostyle.net/your-wish-our-command/"),
+			new GridItem(R.drawable.rate_us, "Rate and Update","file:///android_asset/html.html"))); 
 
 	public List<GridItem> getItemsList() {
 		return items;

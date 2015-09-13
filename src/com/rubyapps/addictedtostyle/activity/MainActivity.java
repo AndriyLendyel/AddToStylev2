@@ -2,14 +2,15 @@ package com.rubyapps.addictedtostyle.activity;
 
 import java.util.List;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -22,12 +23,14 @@ import com.rubyapps.addictedtostyle.R;
 import com.rubyapps.addictedtostyle.adapter.MyGridViewAdapter;
 import com.rubyapps.addictedtostyle.app.AppConfig;
 import com.rubyapps.addictedtostyle.app.MyApplication;
-import com.rubyapps.addictedtostyle.helper.DialogAboutBuilder;
+import com.rubyapps.addictedtostyle.helper.DialogBuilder;
 import com.rubyapps.addictedtostyle.helper.ParseUtils;
 import com.rubyapps.addictedtostyle.model.GridItem;
 
 public class MainActivity extends SherlockActivity {
 
+	private static final String COUNT_TEXT = "count";
+	private static final int COUNT = 3;
 	private ShareActionProvider mShareActionProvider;
 	private GridView gridView;
 	final Handler handler = new Handler();
@@ -37,7 +40,6 @@ public class MainActivity extends SherlockActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		ParseUtils.verifyParseConfiguration(this);
-
 		gridView = (GridView) findViewById(R.id.gridView);
 		final List<GridItem> itemsList = ((MyApplication) this.getApplication()).getItemsList();
 		MyGridViewAdapter adapter = new MyGridViewAdapter(this, R.layout.grid_item, itemsList);
@@ -51,29 +53,48 @@ public class MainActivity extends SherlockActivity {
 				startActivity(intent);
 			}
 		});
-
+		Appodeal.disableNetwork((Context) this, "facebook");
+		Appodeal.setBannerViewId(R.id.appodealBannerView);
 		Appodeal.initialize(this, AppConfig.AD_APP_KEY, Appodeal.INTERSTITIAL | Appodeal.BANNER);
 		Appodeal.setInterstitialCallbacks(interstitialListener);
-		Appodeal.show(this, Appodeal.BANNER_BOTTOM);
+		Appodeal.show(this, Appodeal.BANNER_VIEW);
 		handler.post(sendData);
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		// ////////////////////// Visiting app
+		SharedPreferences prefs = getSharedPreferences(AppConfig.MY_PREFS_NAME, MODE_PRIVATE);
+		if (!prefs.getBoolean(AppConfig.SURE_PRESSED, false)) {
+			int countVisited = prefs.getInt(COUNT_TEXT, 0);
+			SharedPreferences.Editor editor = prefs.edit();
+			if (countVisited < COUNT) {
+				editor.putInt(COUNT_TEXT, countVisited++);
+				editor.commit();
+			} else {
+				editor.putInt(COUNT_TEXT, 0);
+				editor.commit();
+				handler.postDelayed(showDialog, 10000);
+			}
+		}
+		// /////////////////////////////////////////////////////
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Appodeal.onResume(this, Appodeal.BANNER);
+		Appodeal.onResume(this, Appodeal.BANNER_VIEW);
 		Intent intent = getIntent();
 		String url = intent.getStringExtra("url");
 		String message = intent.getStringExtra("message");
 		intent.removeExtra("url");
 		intent.removeExtra("message");
-		if ((url != null && !url.isEmpty()) || message!=null) {
-			Intent intentWeb = new Intent(MainActivity.this,
-					WebViewActivity.class);
+		if ((url != null && !url.isEmpty()) || message != null) {
+			Intent intentWeb = new Intent(MainActivity.this, WebViewActivity.class);
 			intentWeb.putExtra("url", url);
 			intentWeb.putExtra("message", message);
-			intentWeb.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | 
-			        Intent.FLAG_ACTIVITY_CLEAR_TASK);
+			intentWeb.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 			startActivity(intentWeb);
 		}
 	}
@@ -82,6 +103,7 @@ public class MainActivity extends SherlockActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		handler.removeCallbacks(sendData);
+		handler.removeCallbacks(showDialog);
 	}
 
 	@Override
@@ -117,7 +139,7 @@ public class MainActivity extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.menu_about:
-			(new DialogAboutBuilder()).buildAndShowDialog(this);
+			(new DialogBuilder()).buildAndShowAboutDialog(this);
 			break;
 		}
 		return true;
@@ -144,7 +166,6 @@ public class MainActivity extends SherlockActivity {
 
 		@Override
 		public void onInterstitialClicked() {
-			final Handler handler = new Handler();
 			handler.post(sendData);
 		}
 	};
@@ -157,10 +178,16 @@ public class MainActivity extends SherlockActivity {
 					public void run() {
 						Appodeal.show(MainActivity.this, Appodeal.INTERSTITIAL);
 					}
-				}, 100000);
+				}, 230000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	};
+
+	private final Runnable showDialog = new Runnable() {
+		public void run() {
+			(new DialogBuilder()).buildAndShowRateUsDialog(MainActivity.this);
 		}
 	};
 }
