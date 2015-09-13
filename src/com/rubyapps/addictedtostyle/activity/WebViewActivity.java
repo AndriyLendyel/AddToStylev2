@@ -77,7 +77,10 @@ public class WebViewActivity extends SherlockActivity {
 
 			@Override
 			public boolean shouldOverrideUrlLoading(WebView view, String url) {
-				if (Uri.parse(url).getScheme().equals("market")) {
+				if (url.equals("http://addictedtostyle.net/your-wish-our-command/")) {
+					webView.getSettings().setTextSize(WebSettings.TextSize.NORMAL);
+				}
+				if (Uri.parse(url).getScheme().equals("market") || url.contains("play.google.com/store")) {
 					try {
 						Intent intent = new Intent(Intent.ACTION_VIEW);
 						intent.setData(Uri.parse(url));

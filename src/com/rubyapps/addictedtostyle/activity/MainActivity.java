@@ -33,7 +33,7 @@ import com.rubyapps.addictedtostyle.model.GridItem;
 public class MainActivity extends SherlockActivity {
 
 	private static final String COUNT_TEXT = "count";
-	private static final int COUNT = 3;
+	private static final int COUNT = 21;
 	private ShareActionProvider mShareActionProvider;
 	private GridView gridView;
 	final Handler handler = new Handler();
@@ -69,27 +69,23 @@ public class MainActivity extends SherlockActivity {
 	@Override
 	public void onStart() {
 		super.onStart();
-		// ////////////////////// Visiting app
 		SharedPreferences prefs = getSharedPreferences(AppConfig.MY_PREFS_NAME, MODE_PRIVATE);
 		if (!prefs.getBoolean(AppConfig.SURE_PRESSED, false)) {
 			int countVisited = prefs.getInt(COUNT_TEXT, 0);
 			SharedPreferences.Editor editor = prefs.edit();
 			if (countVisited < COUNT) {
-				editor.putInt(COUNT_TEXT, countVisited++);
+				editor.putInt(COUNT_TEXT, ++countVisited);
 				editor.commit();
 			} else {
-				editor.putInt(COUNT_TEXT, 0);
-				editor.commit();
-				handler.postDelayed(showDialog, 10000);
+				handler.postDelayed(showDialog, 70000);
 			}
 		}
-		// /////////////////////////////////////////////////////
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Appodeal.onResume(this, Appodeal.BANNER_VIEW);
+		Appodeal.onResume(this, Appodeal.BANNER);
 		Intent intent = getIntent();
 		String url = intent.getStringExtra("url");
 		String message = intent.getStringExtra("message");
@@ -192,6 +188,10 @@ public class MainActivity extends SherlockActivity {
 
 	private final Runnable showDialog = new Runnable() {
 		public void run() {
+			SharedPreferences prefs = getSharedPreferences(AppConfig.MY_PREFS_NAME, MODE_PRIVATE);
+			SharedPreferences.Editor editor = prefs.edit();
+			editor.putInt(COUNT_TEXT, 0);
+			editor.commit();
 			(new DialogBuilder()).buildAndShowRateUsDialog(MainActivity.this);
 		}
 	};

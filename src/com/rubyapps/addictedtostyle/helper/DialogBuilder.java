@@ -2,6 +2,7 @@ package com.rubyapps.addictedtostyle.helper;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,7 +29,7 @@ public class DialogBuilder {
 					+ context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName
 					+ "</b> <br>Developed by " + "<b>" + "Ruby Apps" + "</b>"));
 			((TextView) layout.findViewById(R.id.textCopyright)).setText(Html.fromHtml("<b>"
-					+ "Copyright \u00A9 2015 </b> <br> Build version 4.4.0/25"));
+					+ "Copyright \u00A9 2015 </b> <br> Build version 4.4.0/27"));
 			alertDialogBuilder.setView(layout).setPositiveButton("OK", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int id) {
 					dialog.cancel();
@@ -49,11 +50,10 @@ public class DialogBuilder {
 				.setMessage("Do you enjoy using this App? Please could you take some seconds to rate it because that would be nice of you");
 		alertDialogBuilder.setNegativeButton("Sure", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
-				SharedPreferences prefs = context.getSharedPreferences(AppConfig.MY_PREFS_NAME, context.MODE_PRIVATE);
+				SharedPreferences prefs = context.getSharedPreferences(AppConfig.MY_PREFS_NAME, Context.MODE_PRIVATE);
 				SharedPreferences.Editor editor = prefs.edit();
 				editor.putBoolean(AppConfig.SURE_PRESSED, true);
 				editor.commit();
-				final String appPackageName = context.getPackageName();
 				showPlayMarket(context);
 			}
 		});
