@@ -77,6 +77,8 @@ public class MainActivity extends SherlockActivity {
 				editor.putInt(COUNT_TEXT, ++countVisited);
 				editor.commit();
 			} else {
+				editor.putInt(COUNT_TEXT, 0);
+				editor.commit();
 				handler.postDelayed(showDialog, 70000);
 			}
 		}
@@ -188,10 +190,6 @@ public class MainActivity extends SherlockActivity {
 
 	private final Runnable showDialog = new Runnable() {
 		public void run() {
-			SharedPreferences prefs = getSharedPreferences(AppConfig.MY_PREFS_NAME, MODE_PRIVATE);
-			SharedPreferences.Editor editor = prefs.edit();
-			editor.putInt(COUNT_TEXT, 0);
-			editor.commit();
 			(new DialogBuilder()).buildAndShowRateUsDialog(MainActivity.this);
 		}
 	};
