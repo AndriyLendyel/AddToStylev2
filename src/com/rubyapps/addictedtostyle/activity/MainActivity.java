@@ -61,7 +61,12 @@ public class MainActivity extends SherlockActivity {
 		Appodeal.initialize(this, AppConfig.AD_APP_KEY, Appodeal.INTERSTITIAL | Appodeal.BANNER);
 		Appodeal.setInterstitialCallbacks(interstitialListener);
 		Appodeal.show(this, Appodeal.BANNER_VIEW);
-		handler.post(sendData);
+		handler.postDelayed(new Runnable(){
+			@Override
+			public void run() {
+				Appodeal.show(MainActivity.this, Appodeal.INTERSTITIAL);	
+			}
+		}, 30000);
 		checkForUpdates();
 
 	}
@@ -181,7 +186,7 @@ public class MainActivity extends SherlockActivity {
 					public void run() {
 						Appodeal.show(MainActivity.this, Appodeal.INTERSTITIAL);
 					}
-				}, 230000);
+				}, 8*60*1000);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
